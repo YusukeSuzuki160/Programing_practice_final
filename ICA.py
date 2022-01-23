@@ -55,7 +55,10 @@ def solve(w, z):
     else:
         return solve(w2, z)        
         
-def answer(w, x, n):
+def answer(w, xin, n):
+    x2 = mean_vec(xin)
+    x2 = np.asmatrix(x2)
+    x = xin - x2
     m = x.shape[0]
     y = np.full((m, n), 0.0)
     y = np.asmatrix(y)
@@ -66,11 +69,13 @@ def answer(w, x, n):
     n1 = x.shape[0]
     n2 = x.shape[1]
     z = np.full((n1, n2), 0.0)
+    z2 = np.full((n1, n2), 0.0)
     for i in range(n1):
         z[i] = whitening(x[i], d).T
+    z2 = whitening(x2, d).T
     for i in range(n):
         wout[i] = solve(w[i], z)
     for i in range(m):
-        y[i] = (np.asmatrix(wout) @ np.asmatrix(z[i]).T).T
+        y[i] = (np.asmatrix(wout) @ (np.asmatrix(z[i]).T + np.asmatrix(z2).T)).T
     return y
         
